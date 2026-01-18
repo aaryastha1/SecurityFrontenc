@@ -74,9 +74,8 @@
 //     </AuthContextProvider>
 //   );
 // }
-
-
-
+// src/routes/AppRouter.jsx
+// src/routers/AppRouter.jsx
 import React from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 
@@ -89,7 +88,7 @@ import Homepage from "../pages/Homepage";
 
 import AdminLayout from '../layout/admin/adminlayout';
 import Products from '../pages/admin/product';
-import Categories from '../pages/admin/categories';
+import Categories from '../pages/admin/categories'; // ✅ Import fixed
 import CategoryManagement from '../pages/admin/CategoryManagement';
 import ViewCategory from '../pages/admin/ViewCategory';
 import UpdateCategory from '../pages/admin/updateCategory';
@@ -102,8 +101,6 @@ import CreateProduct from '../pages/admin/CreateProduct';
 import UpdateProduct from '../pages/admin/UpdateProduct';
 import CategoryProductPage from '../pages/Categoryproduct';
 import FavoritesPage from '../pages/Favoritespage';
-
-import { CartProvider } from '../context/cartcontext';
 import CartPage from '../pages/CartPage';
 import SearchResultsPage from '../pages/searchresultPage';
 import ProfilePage from '../pages/profilePage';
@@ -111,7 +108,8 @@ import CheckoutPage from '../pages/CheckoutPage';
 import OrderSuccess from '../pages/ordersuccess';
 import AdminOrderPage from '../pages/admin/adminOrderPage';
 
-
+import { CartProvider } from '../context/cartcontext';
+import ProtectedRoute from '../routers/protectedRoute'; // Admin protection
 
 export default function AppRouter() {
   return (
@@ -119,7 +117,7 @@ export default function AppRouter() {
       <CartProvider>
         <BrowserRouter>
           <Routes>
-            {/* Public routes inside MainLayout */}
+            {/* -------------------- PUBLIC / USER ROUTES -------------------- */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
@@ -127,48 +125,51 @@ export default function AppRouter() {
               <Route path="/dashboard" element={<HomePage />} />
               <Route path="/home" element={<Homepage />} />
 
-              {/* Category route */}
               <Route path="/category/:categoryName" element={<CategoryProductPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/search" element={<SearchResultsPage />} />
-                 <Route path="/profile" element={<ProfilePage />} />
-                 <Route path="/checkout" element={<CheckoutPage />} />
-                 <Route path="/order-success" element={<OrderSuccess />} />
+              <Route path="/search" element={<SearchResultsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
 
-
-
-            
-                  {/* Search results */}
-     
-
-
-              {/* Categories route moved inside MainLayout for consistent layout */}
+              {/* Fixed import for /categories */}
               <Route path="/categories" element={<Categories />} />
             </Route>
 
-            {/* Admin routes inside AdminLayout */}
+            {/* -------------------- ADMIN ROUTES -------------------- */}
             <Route element={<AdminLayout />}>
-              {/* Redirect /admins to /admins/categoryy */}
+              {/* Redirect /admins → /admins/categoryy */}
               <Route path="/admins" element={<Navigate to="/admins/categoryy" replace />} />
-              
-              <Route path="/admins/*">
-                <Route path="categoryy" element={<CategoryManagement />} />
-                <Route path="categoryy/:id" element={<ViewCategory />} />
-                <Route path="categoryy/:id/edit" element={<UpdateCategory />} />
-                <Route path="categoryy/create" element={<CreateCategory />} />
 
-                <Route path="products" element={<ProductContent />} />
-                <Route path="product" element={<ProductTable />} />
-                <Route path="product/:id" element={<ProductDetail />} />
-                <Route path="product/create" element={<CreateProduct />} />
-                <Route path="product/:id/edit" element={<UpdateProduct />} />
-                <Route path="orders" element={<AdminOrderPage />} />
+              {/* Only admins can access these routes */}
+              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route path="/admins/*">
+                  {/* Category management */}
+                  <Route path="categoryy" element={<CategoryManagement />} />
+                  <Route path="categoryy/:id" element={<ViewCategory />} />
+                  <Route path="categoryy/:id/edit" element={<UpdateCategory />} />
+                  <Route path="categoryy/create" element={<CreateCategory />} />
 
-                <Route path="userss" element={<UserManagement />} />
+                  {/* Product management */}
+                  <Route path="products" element={<ProductContent />} />
+                  <Route path="product" element={<ProductTable />} />
+                  <Route path="product/:id" element={<ProductDetail />} />
+                  <Route path="product/create" element={<CreateProduct />} />
+                  <Route path="product/:id/edit" element={<UpdateProduct />} />
+
+                  {/* Orders */}
+                  <Route path="orders" element={<AdminOrderPage />} />
+
+                  {/* User management */}
+                  <Route path="userss" element={<UserManagement />} />
+                </Route>
               </Route>
             </Route>
+
+            {/* -------------------- CATCH-ALL: Redirect unknown routes -------------------- */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </CartProvider>

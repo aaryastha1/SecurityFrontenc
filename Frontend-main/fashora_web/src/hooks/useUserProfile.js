@@ -6,9 +6,12 @@ export const useGetProfile = () => {
   return useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
-      const res = await axios.get("/auth/me");
+      const token = localStorage.getItem("token"); // your JWT
+      const res = await axios.get("/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return res.data.data;
-    }
+    },
   });
 };
 
@@ -18,11 +21,17 @@ export const useUpdateProfile = () => {
 
   return useMutation({
     mutationFn: async (updatedData) => {
-      const res = await axios.put("/auth/me", updatedData);
+      const token = localStorage.getItem("token"); // your JWT
+      const res = await axios.put("/auth/me", updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-    }
+    },
   });
 };
