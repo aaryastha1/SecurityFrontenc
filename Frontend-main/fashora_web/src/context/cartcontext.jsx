@@ -86,157 +86,120 @@
 // export const useCart = () => useContext(CartContext);
 
 
-
-
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-
-  // Replace with your backend base URL
   const BASE_URL = 'http://localhost:5006/api/cart';
 
-  // Get token from localStorage or your auth provider
-  const token = localStorage.getItem('token');
+  const getAxiosConfig = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    withCredentials: true,
+  });
 
-  // Setup axios headers with auth token
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  // Fetch cart from backend on mount
+  // Fetch cart on mount
   useEffect(() => {
-    if (!token) {
-      setCartItems([]); // No user logged in
-      return;
-    }
-
-    axios
-      .get(BASE_URL, axiosConfig)
-      .then((res) => {
-        if (res.data && res.data.items) {
-          // Map to your frontend structure if needed
-          const items = res.data.items.map((item) => ({
-            ...item.product, // product info
-            quantity: item.quantity,
-          }));
-          setCartItems(items);
+    const fetchCart = async () => {
+      try {
+        const res = await axios.get(BASE_URL, getAxiosConfig());
+        if (res.data?.items) {
+          setCartItems(
+            res.data.items.map((item) => ({
+              ...item.product,
+              quantity: item.quantity,
+            }))
+          );
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Failed to fetch cart:', err);
-      });
-  }, [token]);
+      }
+    };
+    fetchCart();
+  }, []);
 
-  // Add to cart API call
   const addToCart = async (product) => {
-    if (!token) {
-      alert('Please login to add items to cart');
-      return;
-    }
     try {
-      const res = await axios.post(
-        `${BASE_URL}/add`,
-        { productId: product._id },
-        axiosConfig
-      );
-      if (res.data && res.data.items) {
-        const items = res.data.items.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-        }));
-        setCartItems(items);
+      const res = await axios.post(`${BASE_URL}/add`, { productId: product._id }, getAxiosConfig());
+      if (res.data?.items) {
+        setCartItems(
+          res.data.items.map((item) => ({
+            ...item.product,
+            quantity: item.quantity,
+          }))
+        );
       }
-    } catch (error) {
-      console.error('Add to cart failed', error);
+    } catch (err) {
+      console.error('Add to cart failed:', err);
     }
   };
 
-  // Remove from cart API call
   const removeFromCart = async (productId) => {
-    if (!token) return;
     try {
-      const res = await axios.delete(`${BASE_URL}/remove/${productId}`, axiosConfig);
-      if (res.data && res.data.items) {
-        const items = res.data.items.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-        }));
-        setCartItems(items);
+      const res = await axios.delete(`${BASE_URL}/remove/${productId}`, getAxiosConfig());
+      if (res.data?.items) {
+        setCartItems(
+          res.data.items.map((item) => ({
+            ...item.product,
+            quantity: item.quantity,
+          }))
+        );
       }
-    } catch (error) {
-      console.error('Remove from cart failed', error);
-      
+    } catch (err) {
+      console.error('Remove from cart failed:', err);
     }
   };
 
-  // Increase quantity (updateQuantity with quantity + 1)
   const increaseQuantity = async (productId) => {
-    if (!token) return;
-    const currentItem = cartItems.find((item) => item._id === productId);
+    const currentItem = cartItems.find((i) => i._id === productId);
     if (!currentItem) return;
 
     try {
       const res = await axios.put(
         `${BASE_URL}/quantity`,
         { productId, quantity: currentItem.quantity + 1 },
-        axiosConfig
+        getAxiosConfig()
       );
-      if (res.data && res.data.items) {
-        const items = res.data.items.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-        }));
-        setCartItems(items);
+      if (res.data?.items) {
+        setCartItems(
+          res.data.items.map((item) => ({ ...item.product, quantity: item.quantity }))
+        );
       }
-    } catch (error) {
-      console.error('Increase quantity failed', error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  // Decrease quantity (updateQuantity with quantity - 1)
   const decreaseQuantity = async (productId) => {
-    if (!token) return;
-    const currentItem = cartItems.find((item) => item._id === productId);
+    const currentItem = cartItems.find((i) => i._id === productId);
     if (!currentItem) return;
-    const newQuantity = currentItem.quantity - 1;
-    if (newQuantity <= 0) {
-      // Optionally remove item if quantity hits 0
-      await removeFromCart(productId);
-      return;
-    }
+
+    if (currentItem.quantity <= 1) return removeFromCart(productId);
+
     try {
       const res = await axios.put(
         `${BASE_URL}/quantity`,
-        { productId, quantity: newQuantity },
-        axiosConfig
+        { productId, quantity: currentItem.quantity - 1 },
+        getAxiosConfig()
       );
-      if (res.data && res.data.items) {
-        const items = res.data.items.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-        }));
-        setCartItems(items);
+      if (res.data?.items) {
+        setCartItems(
+          res.data.items.map((item) => ({ ...item.product, quantity: item.quantity }))
+        );
       }
-    } catch (error) {
-      console.error('Decrease quantity failed', error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  // Clear cart API call
   const clearCart = async () => {
-    if (!token) return;
     try {
-      await axios.delete(`${BASE_URL}/clear`, axiosConfig);
+      await axios.delete(`${BASE_URL}/clear`, getAxiosConfig());
       setCartItems([]);
-    } catch (error) {
-      console.error('Clear cart failed', error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
