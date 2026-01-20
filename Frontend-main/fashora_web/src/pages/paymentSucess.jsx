@@ -1,20 +1,15 @@
-// import { useEffect } from "react";
-// import { useSearchParams } from "react-router-dom";
-// import axios from "axios";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/cartcontext";
 
-// const PaymentSuccess = () => {
-//   const [params] = useSearchParams();
+export default function PaymentSuccessPage() {
+  const { clearCart } = useCart();
+  const navigate = useNavigate();
 
-//   useEffect(() => {
-//     axios.get("http://localhost:5000/api/esewa/esewa/verify", {
-//       params: {
-//         oid: params.get("oid"),
-//         refId: params.get("refId"),
-//       },
-//     });
-//   }, []);
+  useEffect(() => {
+    clearCart(); // remove items from cart
+    navigate("/order-success", { replace: true }); // go to OrderSuccess page
+  }, []);
 
-//   return <h2>Payment Successful 🎉</h2>;
-// };
-
-// export default PaymentSuccess;
+  return null; // nothing rendered
+}

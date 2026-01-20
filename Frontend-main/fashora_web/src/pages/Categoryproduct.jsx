@@ -150,7 +150,7 @@
 // }
 
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProductsByCategory } from '../hooks/useCategoryProduct';
 import { useFavorites, useToggleFavorite } from '../hooks/usefavorite';
@@ -174,11 +174,10 @@ export default function CategoryProductPage() {
   const handlePrev = () => canPreviousPage && setPageNumber((prev) => prev - 1);
   const handleNext = () => canNextPage && setPageNumber((prev) => prev + 1);
 
-  // ===== Simplified Add to Cart =====
   const handleAddToCart = async (product) => {
     await addToCart(product);
     toast.success(`${product.name} added to cart!`, { duration: 2000 });
-    navigate('/cart'); // go straight to cart page
+    navigate('/cart'); // goes straight to cart page
   };
 
   if (isLoading) return <p className="text-center py-10">Loading products...</p>;
@@ -226,18 +225,19 @@ export default function CategoryProductPage() {
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2">
-                 <button
-  onClick={() => handleAddToCart(product)}
-  className="w-full bg-gradient-to-r from-purple-400 to-blue-500 hover:from-purple-300 hover:to-blue-400 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md"
->
-  <FaShoppingCart className="text-white" />
-  Add to Cart
-</button>
+                  {/* Add to Cart button with light purple → blue gradient */}
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="w-full bg-gradient-to-r from-purple-300 to-blue-400 hover:from-purple-400 hover:to-blue-500 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <FaShoppingCart className="text-white" />
+                    Add to Cart
+                  </button>
 
-
+                  {/* View Details button */}
                   <button
                     onClick={() => navigate(`/product/${product._id}`)}
-                    className="w-full border border-purple-600 text-purple-600 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-purple-600 hover:text-white"
+                    className="w-full border border-blue-400 text-blue-400 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-blue-400 hover:text-white"
                   >
                     View Details
                   </button>

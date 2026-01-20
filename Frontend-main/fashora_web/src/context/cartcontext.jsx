@@ -84,8 +84,6 @@
 // };
 
 // export const useCart = () => useContext(CartContext);
-
-
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -100,7 +98,6 @@ export const CartProvider = ({ children }) => {
     withCredentials: true,
   });
 
-  // Fetch cart on mount
   useEffect(() => {
     const fetchCart = async () => {
       try {

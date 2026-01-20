@@ -85,6 +85,8 @@ import HomePage from '../pages/Dashboard';
 import MainLayout from '../layout/MainLayout';
 import AuthContextProvider from '../auth/authProvider';
 import Homepage from "../pages/Homepage";
+import PaymentSuccess from '../pages/paymentSucess';
+import PaymentFailure from '../pages/paymentFailure';
 
 import AdminLayout from '../layout/admin/adminlayout';
 import Products from '../pages/admin/product';
@@ -133,6 +135,10 @@ export default function AppRouter() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-success" element={<OrderSuccess />} />
+              // App.jsx or your router file
+<Route path="/payment-success" element={<PaymentSuccess />} />
+<Route path="/payment/failure" element={<PaymentFailure />} />
+
 
               {/* Fixed import for /categories */}
               <Route path="/categories" element={<Categories />} />
