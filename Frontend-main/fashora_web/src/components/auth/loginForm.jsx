@@ -56,7 +56,7 @@ const LoginForm = () => {
     recaptchaRef.current?.reset();
   };
 
-  // ===== LOGIN FORM =====
+  
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: Yup.object({
@@ -75,24 +75,22 @@ const LoginForm = () => {
           { ...values, captcha: captchaValue },
           {
             headers: {
-              "X-CSRF-Token": csrfToken, // 🔐 Send CSRF token in headers
+              "X-CSRF-Token": csrfToken, 
             },
           }
         );
 
         resetCaptcha();
-
         if (res?.data?.message?.includes("OTP sent")) {
-          // ✅ Show toast when OTP is sent
           toast.success("OTP has been sent to your email/phone!");
           setIsOTPStep(true);
           setOtpEmail(values.email);
           return;
         }
 
-        // fallback (non-OTP)
+       
         login(res.data.data);
-        toast.success("Login successful!"); // ✅ Show toast on login
+        toast.success("Login successful!"); 
         navigate(res.data.data.role === "admin" ? "/admins/categoryy" : "/home");
       } catch (err) {
         toast.error(err?.response?.data?.message || "Login failed");
@@ -101,7 +99,7 @@ const LoginForm = () => {
     },
   });
 
-  // ===== VERIFY OTP =====
+
   const handleVerifyOTP = async () => {
     if (!otpValue) return toast.error("Enter OTP");
 
