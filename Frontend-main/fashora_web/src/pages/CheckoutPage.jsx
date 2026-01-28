@@ -33,7 +33,7 @@ export default function CheckoutPage() {
     try {
       setLoading(true);
 
-      // ------------------ Place Order ------------------
+      
       const orderRes = await axios.post(
         `${API}/api/esewa/initiate`,
         {
@@ -45,7 +45,7 @@ export default function CheckoutPage() {
           phone: address.phone,
           paymentMethod
         },
-        { withCredentials: true } // important for cookie-based auth
+        { withCredentials: true } 
       );
 
       // ------------------ COD ------------------
