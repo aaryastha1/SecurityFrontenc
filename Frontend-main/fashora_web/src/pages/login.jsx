@@ -13,21 +13,6 @@ export default function Login() {
     navigate('/');
   };
 
-  // if (user) {
-  //   return (
-  //     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded shadow text-center">
-  //       {/* <p className="text-lg font-semibold text-gray-700">
-  //         You are already logged in.
-  //       </p> */}
-  //       {/* <button
-  //         onClick={returnToHome}
-  //         className="mt-4 inline-block bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-6 rounded transition"
-  //       >
-  //         Go to Home
-  //       </button> */}
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="flex min-h-screen w-full">
