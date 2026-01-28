@@ -46,15 +46,7 @@
 //   }
 // };
 
-// // Delete product by ID
-// export const deleteOneProductService = async (id) => {
-//   try {
-//     const response = await deleteOneProductApi(id);
-//     return response.data;
-//   } catch (err) {
-//     throw err.response?.data || { message: "Failed to delete product" };
-//   }
-// };
+
 
 
 import { getAllProductApi, getOneProductApi, deleteOneProductApi, updateOneProductApi, createOneProductApi } from "../../api/admin/productApi";
