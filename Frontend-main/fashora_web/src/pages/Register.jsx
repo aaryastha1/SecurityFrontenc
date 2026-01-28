@@ -9,15 +9,7 @@ export default function Register() {
   
   const { user } = useContext(AuthContext);
 
-  // if (user) {
-  //   return (
-  //     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded shadow text-center">
-  //       <p className="text-lg font-semibold text-gray-700">
-  //         You are already registered.
-  //       </p>
-  //     </div>
-  //   );
-  // }
+
 
   return (
     <div className="flex min-h-screen w-full">
