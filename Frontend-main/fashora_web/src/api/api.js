@@ -34,7 +34,5 @@ const instance = axios.create({
   },
 });
 
-// ❌ REMOVE TOKEN INTERCEPTOR
-// Cookies are sent automatically by browser
 
 export default instance;
